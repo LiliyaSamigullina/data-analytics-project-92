@@ -79,6 +79,7 @@ with rn_sales as (
         ROW_NUMBER() over (partition by customer_id order by sale_date) as rn
     from sales
 )
+
 select
     c.first_name || ' ' || c.last_name as customer,
     s.sale_date,
