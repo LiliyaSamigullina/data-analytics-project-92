@@ -24,13 +24,14 @@ from sales as s
 inner join employees as e
     on s.sales_person_id = e.employee_id
 inner join products as p
-    on s.product_id = p.product_id 
+    on s.product_id = p.product_id
 group by 1
-having AVG(s.quantity * p.price) < (
-    select AVG(s.quantity * p.price)
-    from sales as s
-    inner join products as p
-        on s.product_id = p.product_id
+having
+    AVG(s.quantity * p.price) < (
+        select AVG(s.quantity * p.price)
+        from sales as s
+        inner join products as p
+            on s.product_id = p.product_id
     )
 order by 2;
 
@@ -44,15 +45,15 @@ inner join employees as e
     on s.sales_person_id = e.employee_id
 inner join products as p
     on s.product_id = p.product_id
-group by 1, 2, extract(isodow from s.sale_date)
-order by extract(isodow from s.sale_date), 1;
+group by 1, 2, EXTRACT(isodow from s.sale_date)
+order by EXTRACT(isodow from s.sale_date), 1;
 
 --age groups
 select
-    case 
-    	when c.age between 16 and 25 then '16-25'
-    	when c.age between 16 and 40 then '26-40'
-    	when c.age > 40 then '40+'
+    case
+        when c.age between 16 and 25 then '16-25'
+        when c.age between 16 and 40 then '26-40'
+        when c.age > 40 then '40+'
     end
     as age_category,
     COUNT(c.customer_id) as age_count
@@ -75,7 +76,7 @@ order by 1;
 with rn_sales as (
     select
         sales_id,
-        row_number() over (partition by customer_id order by sale_date) as rn
+        ROW_NUMBER() over (partition by customer_id order by sale_date) as rn
     from sales
 )
 select
@@ -90,7 +91,6 @@ inner join customers as c
 inner join employees as e
     on s.sales_person_id = e.employee_id
 inner join products as pr
-    on s.product_id = pr.product_id 
+    on s.product_id = pr.product_id
 where rn_s.rn = 1 and pr.price = 0
 order by c.customer_id;
-
