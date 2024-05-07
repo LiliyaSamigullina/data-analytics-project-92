@@ -1,6 +1,6 @@
 --count of customers in sales table
-select COUNT(customer_id) as customer_count
-from sales;
+select COUNT(customer_id) as customers_count
+from customers;
 
 
 --top 10 sellers by income
