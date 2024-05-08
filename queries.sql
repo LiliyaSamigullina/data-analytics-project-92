@@ -45,8 +45,11 @@ inner join employees as e
     on s.sales_person_id = e.employee_id
 inner join products as p
     on s.product_id = p.product_id
-group by 1, 2, EXTRACT(isodow from s.sale_date)
-order by EXTRACT(isodow from s.sale_date), 1;
+group by
+    e.first_name || ' ' || e.last_name,
+    TO_CHAR(s.sale_date, 'day'),
+    EXTRACT(isodow from s.sale_date)
+order by EXTRACT(isodow from s.sale_date), seller;
 
 --age groups
 select
