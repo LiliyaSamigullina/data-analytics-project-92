@@ -13,8 +13,8 @@ inner join employees as e
     on s.sales_person_id = e.employee_id
 inner join products as p
     on s.product_id = p.product_id
-group by 1
-order by 3 desc limit 10;
+group by e.first_name || ' ' || e.last_name
+order by income desc limit 10;
 
 --sellers with income lower than avg
 select
@@ -25,7 +25,7 @@ inner join employees as e
     on s.sales_person_id = e.employee_id
 inner join products as p
     on s.product_id = p.product_id
-group by 1
+group by e.first_name || ' ' || e.last_name
 having
     AVG(s.quantity * p.price) < (
         select AVG(s.quantity * p.price)
@@ -33,7 +33,7 @@ having
         inner join products as p
             on s.product_id = p.product_id
     )
-order by 2;
+order by average_income;
 
 --sales by days of week
 select
@@ -51,6 +51,7 @@ group by
     EXTRACT(isodow from s.sale_date)
 order by EXTRACT(isodow from s.sale_date), seller;
 
+
 --age groups
 select
     case
@@ -61,8 +62,8 @@ select
     as age_category,
     COUNT(c.customer_id) as age_count
 from customers as c
-group by 1
-order by 1;
+group by age_category
+order by age_category;
 
 --customers by month
 select
@@ -72,8 +73,8 @@ select
 from sales as s
 inner join products as p
     on s.product_id = p.product_id
-group by 1
-order by 1;
+group by TO_CHAR(s.sale_date, 'YYYY-MM')
+order by selling_month;
 
 --special offer
 with rn_sales as (
@@ -82,7 +83,6 @@ with rn_sales as (
         ROW_NUMBER() over (partition by customer_id order by sale_date) as rn
     from sales
 )
-
 select
     c.first_name || ' ' || c.last_name as customer,
     s.sale_date,
